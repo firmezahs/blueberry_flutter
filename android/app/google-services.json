@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "288861281734",
+    "project_id": "aadi-electronics-blueberry",
+    "storage_bucket": "aadi-electronics-blueberry.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288861281734:android:a750d67bdd75b17dc466c7",
+        "android_client_info": {
+          "package_name": "com.aadielectronics.blueberry"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAokrg_LbnK6IqetZRDfs8TQY5-CgXL70M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
