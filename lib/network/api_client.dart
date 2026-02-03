@@ -35,7 +35,6 @@ Uri buildBaseUrl(String endPoint) {
 Future<Response> buildHttpResponse(String endPoint, {HttpMethodType method = HttpMethodType.GET, Map? request, bool isStripePayment = false}) async {
   if (await isNetworkAvailable()) {
     Uri url = buildBaseUrl(endPoint);
-
     var headers = buildHeaderTokens();
 
     Response response;

@@ -1,6 +1,6 @@
 import 'package:blueberry/utils/functions.dart';
 import 'package:blueberry/view/orders/model/order_response.dart';
-import 'package:blueberry/view/orders/order_detail_screen.dart';
+import 'package:blueberry/view/orders/new_order_detail_screen.dart';
 import 'package:blueberry/view/orders/widget/order_status_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -18,7 +18,7 @@ class OrderCardComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        OrderDetailScreen(orderId: order.id.validate()).launch(context);
+        NewOrderDetailScreen(orderId: order.id.validate()).launch(context);
       },
       child: Container(
         margin: margin ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 6),

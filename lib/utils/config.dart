@@ -50,4 +50,5 @@ class OrderApiEndpoints {
   static const orderDetail = "order/detail";
   static const orderStatus = "order/status";
   static const updateOrderStatus = "order/update-status";
+  static const revertStatus = "revert-status";
 }

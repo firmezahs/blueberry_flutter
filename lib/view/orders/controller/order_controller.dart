@@ -1,9 +1,15 @@
 import 'package:blueberry/controller/api_response.dart';
 import 'package:blueberry/network/api_client.dart';
 import 'package:blueberry/view/orders/model/order_response.dart';
+import 'package:blueberry/view/orders/model/order_response_new.dart' as OrderDataNew;
 import 'package:blueberry/view/orders/model/packaging_response.dart';
 
 class OrderController {
+  static Future<ApiResponse> revertOrderStatusApi({required int orderStatusId, required int orderItemId}) async {
+    ApiResponse res = ApiResponse.fromJson(await handleResponse(await buildHttpResponse(OrderApiEndpoints.revertStatus + "/$orderStatusId/$orderItemId", method: HttpMethodType.POST)));
+    return res;
+  }
+
   static Future<PackagingResponse> productPackingApi() async {
     PackagingResponse res = PackagingResponse.fromJson(await handleResponse(await buildHttpResponse(OrderApiEndpoints.productPackaging, method: HttpMethodType.GET)));
     return res;
@@ -48,6 +54,13 @@ class OrderController {
     var respose = await handleResponse(await buildHttpResponse(OrderApiEndpoints.orderDetail + parameter, method: HttpMethodType.GET));
     OrderData res = OrderData.fromJson(respose['data']);
     return res;
+  }
+
+  static Future<OrderDataNew.OrderData> orderDetailNew({int orderID = 0}) async {
+    String parameter = "/$orderID";
+    var response = await handleResponse(await buildHttpResponse(OrderApiEndpoints.orderDetail + parameter, method: HttpMethodType.GET));
+    OrderDataNew.OrderResponseNew res = OrderDataNew.OrderResponseNew.fromJson(response);
+    return res.orderData!;
   }
 
   static Future<OrderStatus> orderStatus() async {

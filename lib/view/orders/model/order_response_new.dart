@@ -43,12 +43,12 @@ class AddedBy {
 
 class OrderStatus {
   final int? id;
-  final String? orderItemId;
+  final int? orderItemId;
   final int? orderId;
   final AddedBy? addedBy;
-  final String? product;
+  final Product? product;
   final String? status;
-  final String? dispatchQuantity;
+  final int? dispatchQuantity;
   final DateTime? createdAt;
 
   const OrderStatus({this.id, this.orderItemId, this.orderId, this.addedBy, this.product, this.status, this.dispatchQuantity, this.createdAt});
@@ -59,7 +59,7 @@ class OrderStatus {
       orderItemId: json['order_item_id'],
       orderId: json['order_id'] as int?,
       addedBy: json['added_by'] != null ? AddedBy.fromJson(json['added_by'] as Map<String, dynamic>) : null,
-      product: json['product'],
+      product: json['product'] != null ? Product.fromJson(json['product']) : null,
       status: json['status'] as String?,
       dispatchQuantity: json['dispatch_quantity'],
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : null,
@@ -79,7 +79,7 @@ class OrderStatus {
     };
   }
 
-  OrderStatus copyWith({int? id, String? orderItemId, int? orderId, AddedBy? addedBy, String? product, String? status, String? dispatchQuantity, DateTime? createdAt}) {
+  OrderStatus copyWith({int? id, int? orderItemId, int? orderId, AddedBy? addedBy, Product? product, String? status, int? dispatchQuantity, DateTime? createdAt}) {
     return OrderStatus(
       id: id ?? this.id,
       orderItemId: orderItemId ?? this.orderItemId,
@@ -176,7 +176,7 @@ class OrderItems {
       quantity: json['quantity'] as int?,
       dispatchedQuantity: json['dispatched_quantity'] as int?,
       marking: json['marking'] as String?,
-      packaging: json['packaging'] as List<String>?,
+      packaging: json['packaging'] != null ? List<String>.from(json['packaging']) : null,
       pendingAt: json['pending_at'] as String?,
       dispatchedAt: json['dispatched_at'] as String?,
       status: json['status'] as String?,
