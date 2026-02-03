@@ -100,6 +100,12 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initConnectivity();
+
+    LiveStream().on(AppConfig.tokenStream, (value) {
+      if (value == true) {
+        userStore.logout();
+      }
+    });
   }
 
   void initConnectivity() {

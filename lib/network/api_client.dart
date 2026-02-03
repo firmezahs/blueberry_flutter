@@ -19,7 +19,7 @@ Map<String, String> buildHeaderTokens() {
   header.putIfAbsent(HttpHeaders.authorizationHeader, () => 'Bearer ${userStore.accessToken}');
   header.putIfAbsent(HttpHeaders.acceptHeader, () => 'application/json; charset=utf-8');
 
-  // log(jsonEncode(header));
+  log(jsonEncode(header));
   return header;
 }
 
@@ -73,8 +73,15 @@ Future handleResponse(Response response, [bool? avoidTokenError]) async {
   if (!await isNetworkAvailable()) {
     throw errorInternetNotAvailable;
   }
+
+  dynamic responseBody;
+  try {
+    responseBody = jsonDecode(response.body);
+  } catch (e) {
+    log('JSON Decode Error: $e');
+  }
+
   if (response.statusCode == 401) {
-    final responseBody = jsonDecode(response.body);
     if (responseBody is Map && responseBody['message'] == 'Invalid credentials') {
       throw 'Invalid credentials';
     } else if (!avoidTokenError.validate()) {
@@ -82,21 +89,19 @@ Future handleResponse(Response response, [bool? avoidTokenError]) async {
       throw 'Token Expired';
     }
   }
-  if (response.statusCode.isSuccessful()) {
-    return jsonDecode(response.body);
-  } else {
-    try {
-      var body = jsonDecode(response.body);
-      // print("body $body");
 
-      if (body['error'] != null) {
-        throw parseHtmlString(body['error']);
+  if (response.statusCode.isSuccessful()) {
+    return responseBody;
+  } else {
+    if (responseBody is Map) {
+      if (responseBody['error'] != null) {
+        throw parseHtmlString(responseBody['error']);
       }
-      throw parseHtmlString(body['message']);
-    } on Exception catch (e) {
-      log(e);
-      throw errorSomethingWentWrong;
+      if (responseBody['message'] != null) {
+        throw parseHtmlString(responseBody['message']);
+      }
     }
+    throw errorSomethingWentWrong;
   }
 }
 

@@ -5,7 +5,7 @@ import 'package:blueberry/view/auth/model/login_response.dart';
 
 class AuthApiController {
   static Future<LoginResponse> loginApi({required Map<String, dynamic> request}) async {
-    LoginResponse res = LoginResponse.fromJson(await handleResponse(await buildHttpResponse(AuthApiEndpoints.loginApiUrl, request: request, method: HttpMethodType.POST)));
+    LoginResponse res = LoginResponse.fromJson(await handleResponse(await buildHttpResponse(AuthApiEndpoints.loginApiUrl, request: request, method: HttpMethodType.POST), true));
     return res;
   }
 
@@ -15,12 +15,12 @@ class AuthApiController {
   }
 
   static Future<LoginResponse> forgotPasswordApi({required Map<String, dynamic> request}) async {
-    LoginResponse res = LoginResponse.fromJson(await handleResponse(await buildHttpResponse(AuthApiEndpoints.forgotPasswordUrl, request: request, method: HttpMethodType.POST)));
+    LoginResponse res = LoginResponse.fromJson(await handleResponse(await buildHttpResponse(AuthApiEndpoints.forgotPasswordUrl, request: request, method: HttpMethodType.POST), true));
     return res;
   }
 
   static Future<LoginResponse> resetPasswordApi({required Map<String, dynamic> request}) async {
-    LoginResponse res = LoginResponse.fromJson(await handleResponse(await buildHttpResponse(AuthApiEndpoints.resetPasswordUrl, request: request, method: HttpMethodType.POST)));
+    LoginResponse res = LoginResponse.fromJson(await handleResponse(await buildHttpResponse(AuthApiEndpoints.resetPasswordUrl, request: request, method: HttpMethodType.POST), true));
     return res;
   }
 
@@ -30,7 +30,7 @@ class AuthApiController {
   }
 
   static Future<LoginResponse> onSignUpApi({required Map<String, dynamic> request}) async {
-    LoginResponse res = LoginResponse.fromJson(await handleResponse(await buildHttpResponse(AuthApiEndpoints.signUpUrl, request: request, method: HttpMethodType.POST)));
+    LoginResponse res = LoginResponse.fromJson(await handleResponse(await buildHttpResponse(AuthApiEndpoints.signUpUrl, request: request, method: HttpMethodType.POST), true));
     return res;
   }
 

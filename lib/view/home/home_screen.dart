@@ -139,7 +139,37 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
+                    Container(
+                      width: (context.width() / 2) - 14,
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: context.cardColor,
+                        borderRadius: radius(),
+                        boxShadow: defaultBoxShadow(shadowColor: Color(0xFFEFF6FF)),
+                        border: Border.all(color: Color(0xFFCC3AED)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: .start,
+                        mainAxisSize: .min,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 38,
+                                height: 38,
+                                decoration: BoxDecoration(color: Color(0xFFF3E8FF), borderRadius: radius()),
+                                child: Icon(Icons.hourglass_top_rounded, color: Color(0xFFCC3AED)),
+                              ),
+                              Spacer(),
+                              Text(snap.data!.partialDispatched.toString(), style: boldTextStyle(size: 28)),
+                            ],
+                          ),
+                          8.height,
 
+                          Text("Partial Dispatched", style: secondaryTextStyle()),
+                        ],
+                      ),
+                    ),
                     Container(
                       width: (context.width() / 2) - 14,
                       padding: EdgeInsets.all(8),

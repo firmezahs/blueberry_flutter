@@ -6,9 +6,10 @@ class DashboardResponse {
   final int? pending;
   final int? dispatched;
   final int? urgentOrders;
+  final int? partialDispatched;
   final List<OrderData>? orderData;
 
-  const DashboardResponse({this.message, this.totalOrders, this.pending, this.dispatched, this.urgentOrders, this.orderData});
+  const DashboardResponse({this.message, this.totalOrders, this.pending, this.dispatched, this.urgentOrders, this.orderData, this.partialDispatched});
 
   factory DashboardResponse.fromJson(Map<String, dynamic> json) {
     return DashboardResponse(
@@ -17,20 +18,30 @@ class DashboardResponse {
       pending: json['pending'] as int?,
       dispatched: json['dispatched'] as int?,
       urgentOrders: json['urgent_orders'] as int?,
+      partialDispatched: json['partial_dispatched'] as int?,
       orderData: json['data'] != null ? (json['data'] as List).map((e) => OrderData.fromJson(e as Map<String, dynamic>)).toList() : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'message': message, 'total_orders': totalOrders, 'pending': pending, 'dispatched': dispatched, 'urgent_orders': urgentOrders, 'data': orderData?.map((e) => e.toJson()).toList()};
+    return {
+      'message': message,
+      'total_orders': totalOrders,
+      'partial_dispatched': partialDispatched,
+      'pending': pending,
+      'dispatched': dispatched,
+      'urgent_orders': urgentOrders,
+      'data': orderData?.map((e) => e.toJson()).toList(),
+    };
   }
 
-  DashboardResponse copyWith({String? message, int? totalOrders, int? pending, int? dispatched, int? urgentOrders, List<OrderData>? data}) {
+  DashboardResponse copyWith({String? message, int? totalOrders, int? pending, int? dispatched, int? partialDispatched, int? urgentOrders, List<OrderData>? data}) {
     return DashboardResponse(
       message: message ?? this.message,
       totalOrders: totalOrders ?? this.totalOrders,
       pending: pending ?? this.pending,
       dispatched: dispatched ?? this.dispatched,
+      partialDispatched: partialDispatched ?? this.partialDispatched,
       urgentOrders: urgentOrders ?? this.urgentOrders,
       orderData: data ?? this.orderData,
     );

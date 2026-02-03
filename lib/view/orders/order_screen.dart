@@ -31,7 +31,7 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   void init() async {
-    orderListingStore.fetchOrders();
+    orderListingStore.fetchOrders(refresh: true);
     _scrollController.addListener(_onScroll);
   }
 

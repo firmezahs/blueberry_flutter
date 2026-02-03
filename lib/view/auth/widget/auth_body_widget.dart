@@ -14,23 +14,37 @@ class AuthBodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedScrollView(
-      listAnimationType: ListAnimationType.None,
-      padding: EdgeInsets.all(16),
-      children: [
-        60.height,
-        Assets.assetsIcApplogo.agLoadImage(height: 140, width: 240, fit: BoxFit.contain).center(),
-        30.height,
-        Text(title ?? 'Welcome Back👋', style: primaryTextStyle(size: 28)).center(),
-        8.height,
-        Text(subTitle ?? 'Sign in to your account', style: secondaryTextStyle(size: 14)).center(),
-        26.height,
-        Container(
-          padding: EdgeInsets.all(0),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: radius()),
-          child: child,
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AnimatedScrollView(
+          listAnimationType: ListAnimationType.None,
+          padding: EdgeInsets.all(16),
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // 👈 centers vertically
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Assets.assetsIcApplogo.agLoadImage(height: 140, width: 240, fit: BoxFit.contain).center(),
+                    30.height,
+                    Text(title ?? 'Welcome Back👋', style: primaryTextStyle(size: 28)).center(),
+                    8.height,
+                    Text(subTitle ?? 'Sign in to your account', style: secondaryTextStyle(size: 14)).center(),
+                    26.height,
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: radius()),
+                      child: child,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
