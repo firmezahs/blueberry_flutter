@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:blueberry/controller/app_loader_store.dart';
 import 'package:blueberry/controller/app_store.dart';
 import 'package:blueberry/controller/user_store.dart';
@@ -11,6 +13,7 @@ import 'package:blueberry/utils/locale/applocalizations.dart';
 import 'package:blueberry/utils/locale/base_language.dart';
 import 'package:blueberry/utils/widget/fcm_service.dart';
 import 'package:blueberry/utils/widget/local_notification_service.dart';
+import 'package:blueberry/utils/widget/no_internet_widget.dart';
 import 'package:blueberry/view/auth/controller/auth_store.dart';
 import 'package:blueberry/view/dashboard/controller/dashboard_store.dart';
 import 'package:blueberry/view/orders/controller/add_order_store.dart';
@@ -42,7 +45,9 @@ OrderDetailStore orderDetailStore = OrderDetailStore();
 AddOrderStore addOrderStore = AddOrderStore();
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+  await LocalNotificationService.instance.init();
   log('Background message: ${message.messageId}');
+  FirebaseMessagingService.instance.handleBackgroundMessage(message);
 }
 
 void main() async {
@@ -62,24 +67,17 @@ void main() async {
 
   appButtonBackgroundColorGlobal = primaryColor;
   defaultAppButtonTextColorGlobal = Colors.white;
-
-  appStore.setLanguage(DEFAULT_LANGUAGE);
-
-  await initialize();
-  localeLanguageList = languageList();
-
-  appButtonBackgroundColorGlobal = primaryColor;
-  defaultAppButtonTextColorGlobal = Colors.white;
   defaultRadius = 20;
   passwordLengthGlobal = 4;
-  // textBoldSizeGlobal = 14;
-  // textPrimarySizeGlobal = 14;
-  // textSecondarySizeGlobal = 12;
 
-  userStore.setLoggedIn(getBoolAsync(SharePreferencesKey.loggedIn));
+  // Load saved preferences
+  appStore.setLanguage(getStringAsync(SELECTED_LANGUAGE_CODE, defaultValue: DEFAULT_LANGUAGE));
+  // appStore.setDarkModeStatus(getBoolAsync(SharePreferencesKey.isDarkTheme));
+  authStore.setRememberValue(getBoolAsync(SharePreferencesKey.isRemember), isInitializing: true);
 
+  userStore.setLoggedIn(getBoolAsync(SharePreferencesKey.loggedIn), isInitializing: true);
   if (userStore.isLoggedIn.validate()) {
-    userStore.setAccessToken(getStringAsync(SharePreferencesKey.accessToken));
+    userStore.setAccessToken(getStringAsync(SharePreferencesKey.accessToken), isInitializing: true);
     userStore.loadEmployeeData();
     appStore.loadPackagingData();
     appStore.loadOrderStatusData();
@@ -87,8 +85,39 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late StreamSubscription<List<ConnectivityResult>> connectivitySubscription;
+  bool isOffline = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initConnectivity();
+  }
+
+  void initConnectivity() {
+    connectivitySubscription = Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> result) {
+      setState(() {
+        isOffline = result.contains(ConnectivityResult.none);
+      });
+      if (isOffline) {
+        toast('No Internet Connection');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    connectivitySubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,13 +129,21 @@ class MyApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           navigatorKey: navigatorKey,
-          themeMode: appStore.isDarkModeOn ? ThemeMode.dark : ThemeMode.light,
-          home: SplashScreen(),
+          themeMode: ThemeMode.light,
+          home: isOffline ? NoInternetWidget() : SplashScreen(),
           scrollBehavior: SBehavior(),
           supportedLocales: LanguageDataModel.languageLocales(),
           localizationsDelegates: [AppLocalizations(), GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
           localeResolutionCallback: (locale, supportedLocales) => locale,
           locale: Locale(appStore.selectedLanguageCode),
+          builder: (context, child) {
+            return Stack(
+              children: [
+                child!,
+                if (isOffline) Positioned.fill(child: NoInternetWidget()),
+              ],
+            );
+          },
         );
       },
     );

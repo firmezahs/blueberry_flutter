@@ -13,10 +13,10 @@ class AuthStore = AuthStoreBase with _$AuthStore;
 
 abstract class AuthStoreBase with Store {
   @observable
-  TextEditingController emailCont = TextEditingController(text: "8460626188");
+  TextEditingController emailCont = TextEditingController();
 
   @observable
-  TextEditingController passCont = TextEditingController(text: "12345678");
+  TextEditingController passCont = TextEditingController();
 
   @observable
   bool isRemember = true;
@@ -67,9 +67,12 @@ abstract class AuthStoreBase with Store {
       await AuthApiController.loginApi(request: request)
           .then((value) async {
             appLoaderStore.setLoaderValue(appState: AppLoaderStateName.loginApiState, value: false);
-            userStore.setAccessToken(value.loginData!.accessToken.validate(), isInitializing: true);
-            userStore.setEmployeeData(value.loginData!, isInitializing: true);
-            userStore.setLoggedIn(true, isInitializing: true);
+            userStore.setAccessToken(value.loginData!.accessToken.validate());
+            userStore.setEmployeeData(value.loginData!);
+
+            userStore.setLoggedIn(true);
+
+            appStore.init();
 
             toast("Login Successfully!!!");
 

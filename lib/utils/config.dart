@@ -1,5 +1,5 @@
 class AppConfig {
-  static String url = "https://dev-blueberry.firmeza.co.in";
+  static String url = "https://admin.aadielectronics.com";
   static String baseUrl = "$url/api/v1/";
   static String imageUrl = "$url/storage/";
   static String tokenStream = 'tokenStream';
@@ -17,6 +17,7 @@ class SharePreferencesKey {
   static String packagingData = "packagingData";
   static String orderStatus = "orderStatus";
   static String fcmToken = "fcmToken";
+  static String isDarkTheme = "isDarkTheme";
 }
 
 class AuthApiEndpoints {

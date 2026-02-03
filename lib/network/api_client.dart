@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -39,21 +40,30 @@ Future<Response> buildHttpResponse(String endPoint, {HttpMethodType method = Htt
 
     Response response;
 
-    if (method == HttpMethodType.POST) {
-      print("Request: $request");
-      response = await http.post(url, body: jsonEncode(request), headers: headers, encoding: null);
-    } else if (method == HttpMethodType.DELETE) {
-      response = await delete(url, headers: headers);
-    } else if (method == HttpMethodType.PUT) {
-      print("Request: $request");
-      response = await put(url, body: jsonEncode(request), headers: headers);
-    } else {
-      response = await get(url, headers: headers);
+    try {
+      if (method == HttpMethodType.POST) {
+        print("Request: $request");
+        response = await http.post(url, body: jsonEncode(request), headers: headers, encoding: null).timeout(const Duration(seconds: 30));
+      } else if (method == HttpMethodType.DELETE) {
+        response = await delete(url, headers: headers).timeout(const Duration(seconds: 30));
+      } else if (method == HttpMethodType.PUT) {
+        print("Request: $request");
+        response = await put(url, body: jsonEncode(request), headers: headers).timeout(const Duration(seconds: 30));
+      } else {
+        response = await get(url, headers: headers).timeout(const Duration(seconds: 30));
+      }
+
+      log('Response $endPoint ($method): ${response.statusCode} ${response.body}');
+
+      return response;
+    } on TimeoutException {
+      throw 'Request timed out. Please try again.';
+    } on SocketException {
+      throw errorInternetNotAvailable;
+    } catch (e) {
+      log('Request Error: $e');
+      throw errorSomethingWentWrong;
     }
-
-    log('Response $endPoint ($method): ${response.statusCode} ${response.body}');
-
-    return response;
   } else {
     throw errorInternetNotAvailable;
   }

@@ -37,15 +37,17 @@ abstract class _OrderListingStore with Store {
   // -------------------- Actions --------------------
   @action
   Future<void> fetchOrders({bool refresh = false}) async {
+    if (isLoading) return;
+
     if (refresh) {
       page = 0;
       hasMore = true;
-      orders.clear();
     }
 
-    if (!hasMore || isLoading) return;
+    if (!hasMore) return;
 
     isLoading = true;
+    if (refresh) orders.clear();
 
     try {
       final res = await OrderController.getOrderListing(status: selectedStatus, page: page, perPage: perPage);

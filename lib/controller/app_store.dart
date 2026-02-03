@@ -16,8 +16,6 @@ class AppStore = AppStoreBase with _$AppStore;
 
 abstract class AppStoreBase with Store {
   @observable
-  bool isDarkModeOn = false;
-  @observable
   String? fcmToken;
 
   @observable
@@ -29,14 +27,14 @@ abstract class AppStoreBase with Store {
   Future<void> init() async {
     OrderController.productPackingApi()
         .then((value) {
-          setPackagingOrder(value, isInitializing: true);
+          setPackagingOrder(value);
         })
         .catchError((e) {
           log("Error in Packaging ${e.toString()}");
         });
     OrderController.orderStatus()
         .then((value) {
-          setOrderStatus(value, isInitializing: true);
+          setOrderStatus(value);
         })
         .catchError((e) {
           log("Error in Packaging ${e.toString()}");
@@ -52,7 +50,7 @@ abstract class AppStoreBase with Store {
         packagingOrder = PackagingResponse.fromJson(json);
       }
     } catch (e) {
-      debugPrint("Error loading employee data: $e");
+      debugPrint("Error loading packaging data: $e");
     }
   }
 
@@ -65,7 +63,7 @@ abstract class AppStoreBase with Store {
         orderStatus = OrderStatus.fromJson(json);
       }
     } catch (e) {
-      debugPrint("Error loading employee data: $e");
+      debugPrint("Error loading order status data: $e");
     }
   }
 
@@ -76,7 +74,7 @@ abstract class AppStoreBase with Store {
       final jsonString = jsonEncode(packaging.toJson());
 
       // 2️⃣ Optionally save it in SharedPreferences
-      if (isInitializing) {
+      if (!isInitializing) {
         await setValue(SharePreferencesKey.packagingData, jsonString);
       }
 
@@ -94,12 +92,12 @@ abstract class AppStoreBase with Store {
       final jsonString = jsonEncode(orderStatus.toJson());
 
       // 2️⃣ Optionally save it in SharedPreferences
-      if (isInitializing) {
+      if (!isInitializing) {
         await setValue(SharePreferencesKey.orderStatus, jsonString);
       }
 
       // 3️⃣ (Optional) Update store observables
-      orderStatus = orderStatus; // Assuming you have an observable for this
+      this.orderStatus = orderStatus; // Fixed potentially incorrect assignment
     } catch (e) {
       debugPrint("Error saving Order Status data: $e");
     }
@@ -107,17 +105,13 @@ abstract class AppStoreBase with Store {
 
   @observable
   String selectedLanguageCode = DEFAULT_LANGUAGE;
-  @action
-  Future<void> setDarkModeStatus(bool value) async {
-    isDarkModeOn = value;
-  }
 
   @action
   Future<void> setFcmToken(String? value, {bool isInitializing = false}) async {
     fcmToken = value;
 
     // 2️⃣ Optionally save it in SharedPreferences
-    if (isInitializing) {
+    if (!isInitializing) {
       await setValue(SharePreferencesKey.fcmToken, fcmToken);
     }
   }

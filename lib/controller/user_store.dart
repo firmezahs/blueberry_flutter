@@ -28,7 +28,7 @@ abstract class _UserStore with Store {
       final jsonString = jsonEncode(employee.toJson());
 
       // 2️⃣ Optionally save it in SharedPreferences
-      if (isInitializing) {
+      if (!isInitializing) {
         await setValue(SharePreferencesKey.employeeData, jsonString);
       }
 
@@ -45,19 +45,19 @@ abstract class _UserStore with Store {
 
     final updated = employeeData!.copyWith(firstName: alias ?? employeeData!.firstName);
 
-    await setEmployeeData(updated, isInitializing: true);
+    await setEmployeeData(updated, isInitializing: false);
   }
 
   @action
   Future<void> setAccessToken(String val, {bool isInitializing = false}) async {
     accessToken = val;
-    if (isInitializing) await setValue(SharePreferencesKey.accessToken, val);
+    if (!isInitializing) await setValue(SharePreferencesKey.accessToken, val);
   }
 
   @action
   Future<void> setLoggedIn(bool val, {bool isInitializing = false}) async {
     isLoggedIn = val;
-    if (isInitializing) await setValue(SharePreferencesKey.loggedIn, val);
+    if (!isInitializing) await setValue(SharePreferencesKey.loggedIn, val);
   }
 
   @action

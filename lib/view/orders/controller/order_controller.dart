@@ -28,8 +28,16 @@ class OrderController {
   }
 
   static Future<OrderResponse> getOrderListing({String status = 'Pending', int page = 0, int perPage = 10}) async {
-    String parameter = status != "All" ? "?start=$page&rawperpage=$perPage&status=$status" : "?start=$page&rawperpage=$perPage";
-    OrderResponse res = OrderResponse.fromJson(await handleResponse(await buildHttpResponse(OrderApiEndpoints.orderListing + parameter, method: HttpMethodType.GET)));
+    // if (status == "Pending") {
+    //   status = "Pending, Partial Dispatched";
+    // }
+    String parameter = status != "All" ? "?start=$page&rawperpage=$perPage" : "?start=$page&rawperpage=$perPage";
+    var json = {};
+
+    if (status != "All") {
+      json.putIfAbsent("status", () => status == "Pending" ? "Pending, Partial Dispatched" : status);
+    }
+    OrderResponse res = OrderResponse.fromJson(await handleResponse(await buildHttpResponse(OrderApiEndpoints.orderListing + parameter, method: HttpMethodType.POST, request: json)));
 
     return res;
   }
