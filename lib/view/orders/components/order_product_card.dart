@@ -40,8 +40,8 @@ class OrderProductCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (!isReadOnly) Checkbox(value: isSelected, onChanged: onSelected, activeColor: context.primaryColor).withHeight(24).withWidth(24),
-                if (!isReadOnly) 8.width,
+                if (!isReadOnly && item.status != "Dispatched") Checkbox(value: isSelected, onChanged: onSelected, activeColor: context.primaryColor).withHeight(24).withWidth(24),
+                if (!isReadOnly && item.status != "Dispatched") 8.width,
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,12 +74,26 @@ class OrderProductCard extends StatelessWidget {
                 _infoColumn("Total", item.quantity.toString()),
                 _infoColumn("Disp", item.dispatchedQuantity.toString()),
                 _infoColumn("Rem", remaining.toString(), color: remaining > 0 ? Colors.red : Colors.green),
+                _infoColumn("Status", item.status.validate(), color: _getStatusColor(item.status)),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String? status) {
+    switch (status) {
+      case "Pending":
+        return Colors.red;
+      case "Partial Dispatched":
+        return Colors.orange;
+      case "Dispatched":
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
   }
 
   Widget _infoColumn(String label, String value, {Color? color}) {

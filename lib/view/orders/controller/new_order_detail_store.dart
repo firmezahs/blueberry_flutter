@@ -35,7 +35,8 @@ abstract class _NewOrderDetailStore with Store {
 
       order?.orderItems?.forEach((item) {
         if (item.id != null) {
-          selectedItems[item.id!] = true;
+          final isDispatched = item.status == "Dispatched";
+          selectedItems[item.id!] = !isDispatched;
           final remaining = (item.quantity ?? 0) - (item.dispatchedQuantity ?? 0);
           dispatchQtyControllers[item.id!] = TextEditingController(text: remaining.toString());
         }
@@ -54,13 +55,19 @@ abstract class _NewOrderDetailStore with Store {
 
   @action
   void toggleSelectAll(bool? value) {
-    selectedItems.keys.forEach((id) {
-      selectedItems[id] = value ?? false;
+    order?.orderItems?.forEach((item) {
+      if (item.id != null && item.status != "Dispatched") {
+        selectedItems[item.id!] = value ?? false;
+      }
     });
   }
 
   @computed
-  bool get isAllSelected => selectedItems.isNotEmpty && selectedItems.values.every((v) => v);
+  bool get isAllSelected {
+    final eligibleItems = order?.orderItems?.where((item) => item.status != "Dispatched").toList() ?? [];
+    if (eligibleItems.isEmpty) return false;
+    return eligibleItems.every((item) => selectedItems[item.id] ?? false);
+  }
 
   @action
   Future<void> updateStatus() async {

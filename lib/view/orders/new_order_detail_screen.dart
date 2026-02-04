@@ -1,4 +1,5 @@
 import 'package:blueberry/main.dart';
+import 'package:blueberry/view/common/components/custom_confirm_dialog.dart';
 import 'package:blueberry/view/orders/components/order_product_card.dart';
 import 'package:blueberry/view/orders/components/order_status_tracking_item.dart';
 import 'package:blueberry/view/orders/controller/new_order_detail_store.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-import 'package:blueberry/view/common/components/custom_confirm_dialog.dart';
 import 'model/order_response_new.dart';
 
 class NewOrderDetailScreen extends StatefulWidget {
@@ -70,7 +70,7 @@ class _NewOrderDetailScreenState extends State<NewOrderDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Products (${order.orderItems?.length ?? 0})", style: boldTextStyle(size: 18)),
-                  if (order.orderStatus.validate().isEmpty || order.orderStatus!.last.status != "Dispatched")
+                  if (order.orderItems.validate().any((item) => item.status != "Dispatched"))
                     Row(
                       children: [
                         Text("Select All", style: secondaryTextStyle()),
@@ -98,14 +98,9 @@ class _NewOrderDetailScreenState extends State<NewOrderDetailScreen> {
                   width: context.width(),
                   color: context.primaryColor,
                   textStyle: boldTextStyle(color: Colors.white),
-                onTap: () {
-                  showCustomConfirmDialog(
-                    context,
-                    title: "Submit Order?",
-                    subTitle: "This will update the order status based on your selections.",
-                    onAccept: () => store.updateStatus(),
-                  );
-                },
+                  onTap: () {
+                    showCustomConfirmDialog(context, title: "Submit Order?", subTitle: "This will update the order status based on your selections.", onAccept: () => store.updateStatus());
+                  },
                 ),
               ],
 
@@ -122,7 +117,7 @@ class _NewOrderDetailScreenState extends State<NewOrderDetailScreen> {
                     borderRadius: radius(8),
                     border: Border.all(color: context.primaryColor.withOpacity(0.1)),
                   ),
-                  child: Text(order.note!, style: primaryTextStyle()),
+                  child: ReadMoreText(order.note!, style: primaryTextStyle()),
                 ),
               ],
 
@@ -134,15 +129,21 @@ class _NewOrderDetailScreenState extends State<NewOrderDetailScreen> {
                 Text("No status history available", style: secondaryTextStyle()).paddingAll(16)
               else
                 ...(() {
-                  final statusList = order.orderStatus.validate();
-                  return statusList.reversed.map((status) {
-                    final index = statusList.indexOf(status);
-                    final previousStatus = index > 0 ? statusList[index - 1].status : "N/A";
-                    final isLatest = status == statusList.last;
+                  final statusList = order.orderStatus.validate().reversed.toList();
+                  return statusList.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final status = entry.value;
+                    
+                    // Original index in the non-reversed list
+                    final originalStatusList = order.orderStatus.validate();
+                    final originalIndex = originalStatusList.indexOf(status);
+                    final previousStatus = originalIndex > 0 ? originalStatusList[originalIndex - 1].status : "N/A";
 
                     return OrderStatusTrackingItem(
                       status: status,
-                      onRevert: (userStore.isAdmin && status.status != "Pending")
+                      isFirst: index == 0,
+                      isLast: index == statusList.length - 1,
+                      onRevert: (userStore.isAdmin && status.status != "Pending" && status.status != "Revert")
                           ? () {
                               String subDescription = "Reverting from '${status.status}' back to '$previousStatus'.";
 

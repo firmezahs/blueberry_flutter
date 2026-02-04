@@ -42,7 +42,7 @@ class OrderController {
     var json = {};
 
     if (status != "All") {
-      json.putIfAbsent("status", () => status == "Pending" ? "Pending, Partial Dispatched" : status);
+      json.putIfAbsent("status", () => status == "Pending" ? "Pending,Partial Dispatched" : status);
     }
     OrderResponse res = OrderResponse.fromJson(await handleResponse(await buildHttpResponse(OrderApiEndpoints.orderListing + parameter, method: HttpMethodType.POST, request: json)));
 

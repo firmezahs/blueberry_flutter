@@ -248,7 +248,7 @@ class OrderData {
       customerName: json['customer_name'] as String?,
       note: json['note'] as String?,
       isUrgent: json['is_urgent'] as bool?,
-      orderStatus: json['order_status'] != null ? (json['order_status'] as List).map((e) => OrderStatus.fromJson(e as Map<String, dynamic>)).toList() : null,
+      orderStatus: json['order_statuses'] != null ? (json['order_statuses'] as List).map((e) => OrderStatus.fromJson(e as Map<String, dynamic>)).toList() : null,
       orderStatusUpdatedBy: json['order_status_updated_by'] != null ? OrderStatusUpdatedBy.fromJson(json['order_status_updated_by'] as Map<String, dynamic>) : null,
       orderItems: json['order_items'] != null ? (json['order_items'] as List).map((e) => OrderItems.fromJson(e as Map<String, dynamic>)).toList() : null,
       orderItemsCount: json['order_items_count'] as int?,
