@@ -3,6 +3,7 @@ import 'package:blueberry/view/common/components/custom_confirm_dialog.dart';
 import 'package:blueberry/view/orders/components/order_product_card.dart';
 import 'package:blueberry/view/orders/components/order_status_tracking_item.dart';
 import 'package:blueberry/view/orders/controller/new_order_detail_store.dart';
+import 'package:blueberry/view/orders/widget/order_status_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
@@ -56,7 +57,7 @@ class _NewOrderDetailScreenState extends State<NewOrderDetailScreen> {
             return const Center(child: Text("Order not found")).onTap(() => store.fetchOrderDetail(widget.orderId));
           }
 
-          final order = store.order!;
+          final OrderData order = store.order!;
 
           return AnimatedScrollView(
             padding: const EdgeInsets.all(16),
@@ -133,7 +134,7 @@ class _NewOrderDetailScreenState extends State<NewOrderDetailScreen> {
                   return statusList.asMap().entries.map((entry) {
                     final index = entry.key;
                     final status = entry.value;
-                    
+
                     // Original index in the non-reversed list
                     final originalStatusList = order.orderStatus.validate();
                     final originalIndex = originalStatusList.indexOf(status);
@@ -178,19 +179,52 @@ class _NewOrderDetailScreenState extends State<NewOrderDetailScreen> {
     );
   }
 
-  Widget _buildHeader(order) {
+  Widget _buildHeader(OrderData order) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: context.cardColor, borderRadius: radius(12), boxShadow: defaultBoxShadow()),
       child: Column(
         children: [
-          _headerRow("Order Number:", order.orderNumber ?? 'N/A'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Order Number:", style: secondaryTextStyle()),
+              Row(
+                children: [
+                  if (order.isUrgent == true)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(8)),
+                      child: Row(
+                        children: [
+                          Icon(Icons.flash_on, size: 12, color: Colors.red.shade700),
+                          4.width,
+                          Text("URGENT", style: boldTextStyle(size: 10, color: Colors.red.shade700)),
+                        ],
+                      ),
+                    ).paddingRight(8),
+                  Text(order.orderNumber ?? 'N/A', style: boldTextStyle()),
+                ],
+              ),
+            ],
+          ),
           8.height,
+          if (order.orderStatus != null) ...[_headerRowWidget("Status:", OrderStatusChip(status: order.orderStatus!.last.status.validate())), 8.height],
           _headerRow("Customer Name:", order.customerName ?? 'N/A'),
           8.height,
           _headerRow("Ordered At:", order.createdAt != null ? DateFormat('MMM dd, yyyy HH:mm').format(order.createdAt!) : 'N/A'),
         ],
       ),
+    );
+  }
+
+  Widget _headerRowWidget(String label, Widget child) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: secondaryTextStyle()),
+        child,
+      ],
     );
   }
 

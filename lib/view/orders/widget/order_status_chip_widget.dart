@@ -10,16 +10,16 @@ class OrderStatusChip extends StatelessWidget {
     final config = _statusConfig(status);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(color: config.bgColor, borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(color: config.bgColor, borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(config.icon, size: 14, color: config.textColor),
-          const SizedBox(width: 6),
+          Icon(config.icon, size: 12, color: config.textColor),
+          const SizedBox(width: 4),
           Text(
             status,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: config.textColor),
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: config.textColor),
           ),
         ],
       ),
@@ -30,38 +30,38 @@ class OrderStatusChip extends StatelessWidget {
     switch (status) {
       case 'Partial Dispatched':
         return StatusConfig(
-          icon: Icons.check_circle,
-          bgColor: const Color(0xFFEFF6FF), // blue-50
-          textColor: const Color(0xFF2563EB), // blue-600
+          icon: Icons.pending_actions_rounded,
+          bgColor: const Color(0xFFE0F2FE),
+          textColor: const Color(0xFF0369A1),
         );
 
       case 'Dispatched':
         return StatusConfig(
           icon: Icons.local_shipping_rounded,
-          bgColor: const Color(0xFFF3E8FF), // purple-50
-          textColor: const Color(0xFF7C3AED), // purple-600
+          bgColor: const Color(0xFFF3E8FF),
+          textColor: const Color(0xFF7E22CE),
         );
 
       case 'Delivered':
         return StatusConfig(
-          icon: Icons.inventory_2_rounded,
-          bgColor: const Color(0xFFECFDF5), // green-50
-          textColor: const Color(0xFF059669), // green-600
+          icon: Icons.check_circle_rounded,
+          bgColor: const Color(0xFFDCFCE7),
+          textColor: const Color(0xFF15803D),
         );
 
       case 'Rejected':
         return StatusConfig(
           icon: Icons.cancel_rounded,
-          bgColor: const Color(0xFFFEF2F2), // red-50
-          textColor: const Color(0xFFDC2626), // red-600
+          bgColor: const Color(0xFFFEE2E2),
+          textColor: const Color(0xFFB91C1C),
         );
 
       case 'Pending':
       default:
         return StatusConfig(
-          icon: Icons.hourglass_top_rounded,
-          bgColor: const Color(0xFFFFFBEB), // amber-50
-          textColor: const Color(0xFFB45309), // amber-700
+          icon: Icons.hourglass_empty_rounded,
+          bgColor: const Color(0xFFFEF3C7),
+          textColor: const Color(0xFFD97706),
         );
     }
   }
