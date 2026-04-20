@@ -34,7 +34,6 @@ class OrderController {
   }
 
   static Future<OrderResponse> getOrderListing({String status = 'Pending', int page = 0, int perPage = 10}) async {
-    log("e");
     // if (status == "Pending") {
     //   status = "Pending, Partial Dispatched";
     // }

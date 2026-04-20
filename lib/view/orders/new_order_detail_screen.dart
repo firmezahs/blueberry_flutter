@@ -3,7 +3,6 @@ import 'package:blueberry/view/common/components/custom_confirm_dialog.dart';
 import 'package:blueberry/view/orders/components/order_product_card.dart';
 import 'package:blueberry/view/orders/components/order_status_tracking_item.dart';
 import 'package:blueberry/view/orders/controller/new_order_detail_store.dart';
-import 'package:blueberry/view/orders/widget/order_status_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
@@ -58,7 +57,6 @@ class _NewOrderDetailScreenState extends State<NewOrderDetailScreen> {
           }
 
           final OrderData order = store.order!;
-
           return AnimatedScrollView(
             padding: const EdgeInsets.all(16),
             children: [
@@ -209,7 +207,7 @@ class _NewOrderDetailScreenState extends State<NewOrderDetailScreen> {
             ],
           ),
           8.height,
-          if (order.orderStatus != null) ...[_headerRowWidget("Status:", OrderStatusChip(status: order.orderStatus!.last.status.validate())), 8.height],
+          // if (order.orderStatus != null) ...[_headerRowWidget("Status:", OrderStatusChip(status: order.orderStatus!.last.status.validate())), 8.height],
           _headerRow("Customer Name:", order.customerName ?? 'N/A'),
           8.height,
           _headerRow("Ordered At:", order.createdAt != null ? DateFormat('MMM dd, yyyy HH:mm').format(order.createdAt!) : 'N/A'),

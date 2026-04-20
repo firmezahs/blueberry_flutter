@@ -51,7 +51,7 @@ abstract class _OrderListingStore with Store {
 
     try {
       final res = await OrderController.getOrderListing(status: selectedStatus, page: page, perPage: perPage);
-
+      log(res.data!.length);
       final fetched = res.data ?? [];
 
       if (urgentOnly) {
